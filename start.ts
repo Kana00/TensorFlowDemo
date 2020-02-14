@@ -7,4 +7,6 @@ import MLDemo from './MLDemo';
 
   const neuralML = new MLDemo();
   neuralML.setData(carsData);
+  neuralML.setNumberOfEpochs(20);
+  await neuralML.trainingNeuralModel();
 })();
