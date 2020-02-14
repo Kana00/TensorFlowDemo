@@ -42,8 +42,11 @@ export default class MLDemo {
 
       Tensorflow.util.shuffle(this.trainingSet);
 
-      this.inputTensor = Tensorflow.tensor2d(inputs, [inputs.length, 1]);
-      this.labelTensor = Tensorflow.tensor2d(labels, [labels.length, 1]);
+      const listOfInputs = this.trainingSet.map((oneData:any) => oneData.horsepower);
+      const listOfLabels = this.trainingSet.map((oneLabel:any) => oneLabel.mpg);
+
+      this.inputTensor = Tensorflow.tensor2d(listOfInputs, [listOfInputs.length, 1]);
+      this.labelTensor = Tensorflow.tensor2d(listOfLabels, [listOfLabels.length, 1]);
     });
   }
 }
