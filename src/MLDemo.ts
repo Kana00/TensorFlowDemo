@@ -12,7 +12,7 @@ export default class MLDemo {
   private labelMax: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
   private labelMin: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
   private batchSize = 32; // the size of the batch valeurs for each learn iteration
-  private epochs = 100; // the number of learn iteration (compare with loss function N times)
+  private epochs = 28; // the number of learn iteration (compare with loss function N times)
   inputTensorNormalized: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
   labelTensorNormalized: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
 
@@ -53,28 +53,26 @@ export default class MLDemo {
 
   createTensors() {
     // create intermediaite Tensors
-    Tensorflow.tidy(() => {
 
-      Tensorflow.util.shuffle(this.trainingSet);
+    Tensorflow.util.shuffle(this.trainingSet);
 
-      const listOfInputs = this.trainingSet.map((oneData: carType) => oneData.Horsepower);
-      const listOfLabels = this.trainingSet.map((oneLabel: carType) => oneLabel.Miles_per_Gallon);
+    const listOfInputs = this.trainingSet.map((oneData: carType) => oneData.Horsepower);
+    const listOfLabels = this.trainingSet.map((oneLabel: carType) => oneLabel.Miles_per_Gallon);
 
-      this.inputTensor = Tensorflow.tensor2d(listOfInputs, [listOfInputs.length, 1]);
-      this.labelTensor = Tensorflow.tensor2d(listOfLabels, [listOfLabels.length, 1]);
+    this.inputTensor = Tensorflow.tensor2d(listOfInputs, [listOfInputs.length, 1]);
+    this.labelTensor = Tensorflow.tensor2d(listOfLabels, [listOfLabels.length, 1]);
 
-      // define extremum with min max method helper
-      this.inputMax = this.inputTensor.max();
-      this.inputMin = this.inputTensor.min();
-      this.labelMax = this.labelTensor.max();
-      this.labelMin = this.labelTensor.min();
+    // define extremum with min max method helper
+    this.inputMax = this.inputTensor.max();
+    this.inputMin = this.inputTensor.min();
+    this.labelMax = this.labelTensor.max();
+    this.labelMin = this.labelTensor.min();
 
-      // normalize values between 0 ⟷ 1 to help learning phasis
-      // rage-normalized absolute différence algorythme:
-      // Ai(normalized) = (Ai - Amax) / (Amax - Amin)
-      this.inputTensorNormalized = this.inputTensor.sub(this.inputMin).div(this.inputMax.sub(this.inputMin));
-      this.labelTensorNormalized = this.labelTensor.sub(this.labelMin).div(this.labelMax.sub(this.labelMin));
-    });
+    // normalize values between 0 ⟷ 1 to help learning phasis
+    // rage-normalized absolute différence algorythme:
+    // Ai(normalized) = (Ai - Amax) / (Amax - Amin)
+    this.inputTensorNormalized = this.inputTensor.sub(this.inputMin).div(this.inputMax.sub(this.inputMin));
+    this.labelTensorNormalized = this.labelTensor.sub(this.labelMin).div(this.labelMax.sub(this.labelMin));
   }
 
   setNumberOfEpochs(numberOfRepetition: number) {
@@ -108,10 +106,8 @@ export default class MLDemo {
       callbacks: this.callbacksFeedBack as Tensorflow.CustomCallbackArgs
     };
 
-    // this.inputTensorNormalized;
-    // this.labelTensorNormalized;
     // waiting for the end of training
-    if(this.inputTensorNormalized !== undefined && this.labelTensorNormalized !== undefined) {
+    if (this.inputTensorNormalized !== undefined && this.labelTensorNormalized !== undefined) {
       await this.neuralModel.fit(this.inputTensorNormalized, this.labelTensorNormalized, configurationFitingPhasis);
     } else {
       console.log('this.labelTensor or this.inputTensor is undefined');
