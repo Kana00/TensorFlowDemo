@@ -1,19 +1,20 @@
-import Tensorflow from '@tensorflow/tfjs-node';
+import * as Tensorflow from '@tensorflow/tfjs-node';
+import { Sequential, Tensor2D } from '@tensorflow/tfjs-node';
 
 
 export default class MLDemo {
-  private neuralModel: Tensorflow.Sequential;
+  private neuralModel: Sequential;
   private trainingSet: any;
-  private inputTensor: Tensorflow.Tensor2D | undefined;
-  private labelTensor: Tensorflow.Tensor2D | undefined;
-  private inputMax: any;
-  private inputMin: any;
-  private labelMax: any;
-  private labelMin: any;
+  private inputTensor: Tensor2D | undefined;
+  private labelTensor: Tensor2D | undefined;
+  private inputMax: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
+  private inputMin: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
+  private labelMax: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
+  private labelMin: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
   private batchSize = 32; // the size of the batch valeurs for each learn iteration
   private epochs = 28; // the number of learn iteration (compare with loss function N times)
-  inputTensorNormalized: any;
-  labelTensorNormalized: any;
+  inputTensorNormalized: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
+  labelTensorNormalized: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
 
   constructor() {
     // create neural model
@@ -102,7 +103,7 @@ export default class MLDemo {
     });
 
 
-    const configurationFitingModel: Tensorflow.ModelFitArgs = {
+    const configurationFitingPhasis: Tensorflow.ModelFitArgs = {
       batchSize: this.batchSize,
       epochs: this.epochs,
       shuffle: true,
@@ -110,7 +111,18 @@ export default class MLDemo {
       callbacks: this.callbacksFeedBack as Tensorflow.CustomCallbackArgs
     };
 
+    // this.inputTensorNormalized;
+    // this.labelTensorNormalized;
     // waiting for the end of training
-    await this.neuralModel.fit(this.inputTensorNormalized, this.labelTensorNormalized, configurationFitingModel);
+    if(this.inputTensor !== undefined && this.labelTensor !== undefined) {
+      await this.neuralModel.fit(this.inputTensor, this.labelTensor, configurationFitingPhasis);
+    } else {
+      console.log('this.labelTensor or this.inputTensor is undefined');
+    }
+  }
+
+  getPredictionMiles_per_GallonWithHorsePower(horsePower: number): number {
+
+    return 0;
   }
 }
