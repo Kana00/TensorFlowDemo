@@ -6,6 +6,10 @@ export default class MLDemo {
   private trainingSet: any;
   private inputTensor: Tensorflow.Tensor2D | undefined;
   private labelTensor: Tensorflow.Tensor2D | undefined;
+  inputMax: any;
+  inputMin: any;
+  labelMax: any;
+  labelMin: any;
 
 
   constructor() {
@@ -47,6 +51,22 @@ export default class MLDemo {
 
       this.inputTensor = Tensorflow.tensor2d(listOfInputs, [listOfInputs.length, 1]);
       this.labelTensor = Tensorflow.tensor2d(listOfLabels, [listOfLabels.length, 1]);
+
+      // define extremum with min max method helper
+      this.inputMax = this.inputTensor.max();
+      this.inputMin = this.inputTensor.min();
+      this.labelMax = this.labelTensor.max();
+      this.labelMin = this.labelTensor.min();
+
+      // normalize values between 0 ⟷ 1 to help learning phasis
+      // rage-normalized absolute différence algorythme:
+      // Ai(normalized) = (Ai - Amax) / (Amax - Amin)
+      const inputTensorNormalized = this.inputTensor.sub(this.inputMin).div(this.inputMax.sub(this.inputMin));
+      const labelTensorNormalized = this.labelTensor.sub(this.labelMin).div(this.labelMax.sub(this.labelMin));
     });
+  }
+
+  trainingNeuralModel() {
+
   }
 }
