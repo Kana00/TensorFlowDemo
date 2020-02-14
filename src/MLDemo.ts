@@ -12,7 +12,7 @@ export default class MLDemo {
   private labelMax: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
   private labelMin: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
   private batchSize = 32; // the size of the batch valeurs for each learn iteration
-  private epochs = 28; // the number of learn iteration (compare with loss function N times)
+  private epochs = 100; // the number of learn iteration (compare with loss function N times)
   inputTensorNormalized: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
   labelTensorNormalized: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
 
@@ -31,29 +31,34 @@ export default class MLDemo {
     this.neuralModel.add(layer3);
     this.neuralModel.add(layer4);
     this.neuralModel.add(layer5);
+
+    // set parameters of training method
+    this.neuralModel.compile({
+      optimizer: Tensorflow.train.adam(),
+      loss: Tensorflow.losses.meanSquaredError,
+      metrics: ['mse'],
+    });
   }
 
-  setData(datas: any) {
+  setData(datas: Array<carType>) {
     // format datas
-    this.trainingSet = datas.map((car: any) => ({
-      mpg: car.Miles_per_Gallon,
-      horsepower: car.Horsepower,
+    this.trainingSet = datas.map((car: carType) => ({
+      Miles_per_Gallon: car.Miles_per_Gallon,
+      Horsepower: car.Horsepower,
     }));
 
     // clean wrong values
-    this.trainingSet = this.trainingSet.filter((car: any) => (car.mpg != null && car.horsepower != null));
-
-    this.initTensors();
+    this.trainingSet = this.trainingSet.filter((car: carType) => (car.Miles_per_Gallon != null && car.Horsepower != null));
   }
 
-  private initTensors() {
+  createTensors() {
     // create intermediaite Tensors
     Tensorflow.tidy(() => {
 
       Tensorflow.util.shuffle(this.trainingSet);
 
-      const listOfInputs = this.trainingSet.map((oneData: any) => oneData.horsepower);
-      const listOfLabels = this.trainingSet.map((oneLabel: any) => oneLabel.mpg);
+      const listOfInputs = this.trainingSet.map((oneData: carType) => oneData.Horsepower);
+      const listOfLabels = this.trainingSet.map((oneLabel: carType) => oneLabel.Miles_per_Gallon);
 
       this.inputTensor = Tensorflow.tensor2d(listOfInputs, [listOfInputs.length, 1]);
       this.labelTensor = Tensorflow.tensor2d(listOfLabels, [listOfLabels.length, 1]);
@@ -95,14 +100,6 @@ export default class MLDemo {
 
   async trainingNeuralModel() {
 
-    // set parameters of training method
-    this.neuralModel.compile({
-      optimizer: Tensorflow.train.adam(),
-      loss: Tensorflow.losses.meanSquaredError,
-      metrics: ['mse'],
-    });
-
-
     const configurationFitingPhasis: Tensorflow.ModelFitArgs = {
       batchSize: this.batchSize,
       epochs: this.epochs,
@@ -114,8 +111,8 @@ export default class MLDemo {
     // this.inputTensorNormalized;
     // this.labelTensorNormalized;
     // waiting for the end of training
-    if(this.inputTensor !== undefined && this.labelTensor !== undefined) {
-      await this.neuralModel.fit(this.inputTensor, this.labelTensor, configurationFitingPhasis);
+    if(this.inputTensorNormalized !== undefined && this.labelTensorNormalized !== undefined) {
+      await this.neuralModel.fit(this.inputTensorNormalized, this.labelTensorNormalized, configurationFitingPhasis);
     } else {
       console.log('this.labelTensor or this.inputTensor is undefined');
     }
