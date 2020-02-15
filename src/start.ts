@@ -7,7 +7,7 @@ import carsData from './carsData';
   await neuralML.createTensors();
   await neuralML.trainingNeuralModel();
 
-  const horsePowerToTest = 130;
+  const horsePowerToTest = 80;
   const prediction = neuralML.getPredictionMiles_per_GallonWithHorsePower(horsePowerToTest);
-  console.log(`${horsePowerToTest} miles per gallon ⇋ horse power = ${prediction}`);
+  console.log(`${horsePowerToTest} horse power ⇋ miles per gallon = ${prediction}`);
 })();

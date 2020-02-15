@@ -3,7 +3,7 @@ import { Sequential, Tensor2D, Tensor, Rank } from '@tensorflow/tfjs-node';
 
 export default class MLDemo {
   private neuralModel: Sequential;
-  private trainingSet: Array<carType> | undefined;
+  private trainingSet: any;
   private inputTensor: Tensor2D | undefined;
   private labelTensor: Tensor2D | undefined;
   private inputMax: Tensor<Rank> | undefined;
@@ -121,18 +121,26 @@ export default class MLDemo {
     // Generate predictions for a uniform range of numbers between 0 and 1;
     // We un-normalize the data by doing the inverse of the min-max scaling
     // that we did earlier.
+    // @ts-ignore
     const [xs, preds] = Tensorflow.tidy(() => {
 
-      const xRange = Tensorflow.linspace(0, 1, 100);
-      const prediction = this.neuralModel.predict(xRange.reshape([100, 1]));
+      // const xRange = Tensorflow.linspace(0, , 1);
+      const valueWanted = Tensorflow.tensor1d([horsePower]);
+      // normalized this tensor
+      // this.inputTensor.sub(this.inputMin).div(this.inputMax.sub(this.inputMin));
+      // @ts-ignore
+      const xRange = valueWanted.sub(this.inputMin).div(this.inputMax.sub(this.inputMin));
+      const prediction = this.neuralModel.predict(xRange);
 
-      // Ai(normalized) = (Ai - Amax) / (Amax - Amin)
-      // (Amax - Amin)
-      const unNormalizationX = xRange.mul(this.inputMax.sub(this.inputMin)).add(this.inputMin);
-      const unNormalizationPrediction = prediction.mul(this.labelMax.sub(this.labelMin)).add(this.labelMin);
-
-      // Un-normalize the data
-      return [unNormalizationX.dataSync(), unNormalizationPrediction.dataSync()];
+      // Normalization ➔ Ai(normalized) = (Ai - Amax) / (Amax - Amin)
+      // Unormalization ➔ Ai = Ai(normalized) * (Amax - Amin) + Amax
+      if(this.inputMax !== undefined && this.inputMin !== undefined && this.labelMax !== undefined && this.labelMin !== undefined) {
+        const unNormalizationX = xRange.mul(this.inputMax.sub(this.inputMin)).add(this.inputMin);
+        // @ts-ignore
+        const unNormalizationPrediction = prediction.mul(this.labelMax.sub(this.labelMin)).add(this.labelMin);
+        // Un-normalize the data
+        return [unNormalizationX.dataSync(), unNormalizationPrediction.dataSync()];
+      }
     });
 
 
@@ -144,6 +152,6 @@ export default class MLDemo {
     //   x: data.Horsepower, y: data.Miles_per_Gallon,
     // }));
 
-    return 0;
+    return preds[0];
   }
 }
