@@ -93,9 +93,10 @@ export default class MLDemo {
     return new Tensorflow.CustomCallback({
       onEpochEnd: (epoch, log) => {
         if (log !== undefined) {
-          process.stdout.clearLine(0);
-          process.stdout.cursorTo(0, 0);
-          this.consoleProgressBar.updateAndDraw(epoch);
+          // process.stdout.clearLine(0);
+          // process.stdout.cursorTo(0, 0);
+          this.consoleProgressBar.setPosition(100,0);
+          this.consoleProgressBar.updateAndDraw(epoch + 1);
           // process.stdout.write(`Training ➔ ${(((epoch + 1) / this.epochs) * 100).toFixed(2)}%\n`);
           // process.stdout.write(`Loss ➔ ${(log.loss * 100).toFixed(2)}%\n`);
           // process.stdout.write(`Error ➔ ${(log.mse * 100).toFixed(2)}%`);
@@ -105,7 +106,7 @@ export default class MLDemo {
   }
 
   async trainingNeuralModel() {
-    console.clear();
+    // console.clear();
     const configurationFitingPhasis: Tensorflow.ModelFitArgs = {
       batchSize: this.batchSize,
       epochs: this.epochs,
