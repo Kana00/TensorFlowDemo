@@ -118,40 +118,26 @@ export default class MLDemo {
   }
 
   getPredictionMiles_per_GallonWithHorsePower(horsePower: number): number {
-    // Generate predictions for a uniform range of numbers between 0 and 1;
-    // We un-normalize the data by doing the inverse of the min-max scaling
-    // that we did earlier.
     // @ts-ignore
-    const [xs, preds] = Tensorflow.tidy(() => {
+    const prediction = Tensorflow.tidy(() => {
 
       // const xRange = Tensorflow.linspace(0, , 1);
       const valueWanted = Tensorflow.tensor1d([horsePower]);
       // normalized this tensor
-      // this.inputTensor.sub(this.inputMin).div(this.inputMax.sub(this.inputMin));
       // @ts-ignore
       const xRange = valueWanted.sub(this.inputMin).div(this.inputMax.sub(this.inputMin));
       const prediction = this.neuralModel.predict(xRange);
 
-      // Normalization ➔ Ai(normalized) = (Ai - Amax) / (Amax - Amin)
       // Unormalization ➔ Ai = Ai(normalized) * (Amax - Amin) + Amax
       if(this.inputMax !== undefined && this.inputMin !== undefined && this.labelMax !== undefined && this.labelMin !== undefined) {
         const unNormalizationX = xRange.mul(this.inputMax.sub(this.inputMin)).add(this.inputMin);
         // @ts-ignore
         const unNormalizationPrediction = prediction.mul(this.labelMax.sub(this.labelMin)).add(this.labelMin);
         // Un-normalize the data
-        return [unNormalizationX.dataSync(), unNormalizationPrediction.dataSync()];
+        return unNormalizationPrediction.dataSync();
       }
     });
 
-
-    // const predictedPoints = Array.from(xs).map((val, i) => {
-    //   return { x: val, y: preds[i] };
-    // });
-
-    // const originalPoints = this.trainingSet.map((data: carType) => ({
-    //   x: data.Horsepower, y: data.Miles_per_Gallon,
-    // }));
-
-    return preds[0];
+    return prediction[0];
   }
 }
