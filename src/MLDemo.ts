@@ -1,18 +1,19 @@
 import * as Tensorflow from '@tensorflow/tfjs-node';
+import { Sequential, Tensor2D, Tensor, Rank } from '@tensorflow/tfjs-node';
 
 export default class MLDemo {
-  private neuralModel: Tensorflow.Sequential;
-  private trainingSet: any;
-  private inputTensor: Tensorflow.Tensor2D | undefined;
-  private labelTensor: Tensorflow.Tensor2D | undefined;
-  private inputMax: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
-  private inputMin: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
-  private labelMax: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
-  private labelMin: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
+  private neuralModel: Sequential;
+  private trainingSet: Array<carType> | undefined;
+  private inputTensor: Tensor2D | undefined;
+  private labelTensor: Tensor2D | undefined;
+  private inputMax: Tensor<Rank> | undefined;
+  private inputMin: Tensor<Rank> | undefined;
+  private labelMax: Tensor<Rank> | undefined;
+  private labelMin: Tensor<Rank> | undefined;
   private batchSize = 32; // the size of the batch valeurs for each learn iteration
   private epochs = 28; // the number of learn iteration (compare with loss function N times)
-  inputTensorNormalized: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
-  labelTensorNormalized: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
+  inputTensorNormalized: Tensor<Rank> | undefined;
+  labelTensorNormalized: Tensor<Rank> | undefined;
 
   constructor() {
     // create neural model
@@ -90,9 +91,9 @@ export default class MLDemo {
     return new Tensorflow.CustomCallback({
       onEpochEnd: (epoch, log) => {
         console.clear();
-        if(log !== undefined) {
-          console.log(`avancement ${(((epoch+1)/this.epochs) * 100).toFixed(2)}%`);
-          console.log(`perte ${(log.loss*100).toFixed(2)}% - erreur ${(log.mse*100).toFixed(2)}%`);
+        if (log !== undefined) {
+          console.log(`avancement ${(((epoch + 1) / this.epochs) * 100).toFixed(2)}%`);
+          console.log(`perte ${(log.loss * 100).toFixed(2)}% - erreur ${(log.mse * 100).toFixed(2)}%`);
         }
       }
     });
@@ -117,40 +118,32 @@ export default class MLDemo {
   }
 
   getPredictionMiles_per_GallonWithHorsePower(horsePower: number): number {
-    return 0;
-    /*
-    const { inputMax, inputMin, labelMin, labelMax } = normalizationData;
-
     // Generate predictions for a uniform range of numbers between 0 and 1;
     // We un-normalize the data by doing the inverse of the min-max scaling
     // that we did earlier.
     const [xs, preds] = Tensorflow.tidy(() => {
 
-      const xs = Tensorflow.linspace(0, 1, 100);
-      const preds = this.neuralModel.predict(xs.reshape([100, 1]));
+      const xRange = Tensorflow.linspace(0, 1, 100);
+      const prediction = this.neuralModel.predict(xRange.reshape([100, 1]));
 
-      const unNormXs = xs
-        .mul(inputMax.sub(inputMin))
-        .add(inputMin);
-
-      const unNormPreds = preds
-        .mul(labelMax.sub(labelMin))
-        .add(labelMin);
+      // Ai(normalized) = (Ai - Amax) / (Amax - Amin)
+      // (Amax - Amin)
+      const unNormalizationX = xRange.mul(this.inputMax.sub(this.inputMin)).add(this.inputMin);
+      const unNormalizationPrediction = prediction.mul(this.labelMax.sub(this.labelMin)).add(this.labelMin);
 
       // Un-normalize the data
-      return [unNormXs.dataSync(), unNormPreds.dataSync()];
+      return [unNormalizationX.dataSync(), unNormalizationPrediction.dataSync()];
     });
 
 
-    const predictedPoints = Array.from(xs).map((val, i) => {
-      return { x: val, y: preds[i] };
-    });
+    // const predictedPoints = Array.from(xs).map((val, i) => {
+    //   return { x: val, y: preds[i] };
+    // });
 
-    const originalPoints = inputData.map(d => ({
-      x: d.horsepower, y: d.mpg,
-    }));
+    // const originalPoints = this.trainingSet.map((data: carType) => ({
+    //   x: data.Horsepower, y: data.Miles_per_Gallon,
+    // }));
 
     return 0;
-    */
   }
 }
