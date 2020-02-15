@@ -1,12 +1,10 @@
 import * as Tensorflow from '@tensorflow/tfjs-node';
-import { Sequential, Tensor2D } from '@tensorflow/tfjs-node';
-
 
 export default class MLDemo {
-  private neuralModel: Sequential;
+  private neuralModel: Tensorflow.Sequential;
   private trainingSet: any;
-  private inputTensor: Tensor2D | undefined;
-  private labelTensor: Tensor2D | undefined;
+  private inputTensor: Tensorflow.Tensor2D | undefined;
+  private labelTensor: Tensorflow.Tensor2D | undefined;
   private inputMax: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
   private inputMin: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
   private labelMax: Tensorflow.Tensor<Tensorflow.Rank> | undefined;
@@ -90,8 +88,12 @@ export default class MLDemo {
         onYield?: (epoch: number, batch: number, logs: Logs) => void | Promise<void>;
      */
     return new Tensorflow.CustomCallback({
-      onTrainBegin: async () => {
-        console.log('training begin');
+      onEpochEnd: (epoch, log) => {
+        console.clear();
+        if(log !== undefined) {
+          console.log(`avancement ${(((epoch+1)/this.epochs) * 100).toFixed(2)}%`);
+          console.log(`perte ${(log.loss*100).toFixed(2)}% - erreur ${(log.mse*100).toFixed(2)}%`);
+        }
       }
     });
   }
@@ -102,8 +104,8 @@ export default class MLDemo {
       batchSize: this.batchSize,
       epochs: this.epochs,
       shuffle: true,
-      verbose: 1,
-      callbacks: this.callbacksFeedBack as Tensorflow.CustomCallbackArgs
+      verbose: 0,
+      callbacks: this.callbacksFeedBack() as Tensorflow.CustomCallbackArgs
     };
 
     // waiting for the end of training
@@ -115,7 +117,40 @@ export default class MLDemo {
   }
 
   getPredictionMiles_per_GallonWithHorsePower(horsePower: number): number {
+    return 0;
+    /*
+    const { inputMax, inputMin, labelMin, labelMax } = normalizationData;
+
+    // Generate predictions for a uniform range of numbers between 0 and 1;
+    // We un-normalize the data by doing the inverse of the min-max scaling
+    // that we did earlier.
+    const [xs, preds] = Tensorflow.tidy(() => {
+
+      const xs = Tensorflow.linspace(0, 1, 100);
+      const preds = this.neuralModel.predict(xs.reshape([100, 1]));
+
+      const unNormXs = xs
+        .mul(inputMax.sub(inputMin))
+        .add(inputMin);
+
+      const unNormPreds = preds
+        .mul(labelMax.sub(labelMin))
+        .add(labelMin);
+
+      // Un-normalize the data
+      return [unNormXs.dataSync(), unNormPreds.dataSync()];
+    });
+
+
+    const predictedPoints = Array.from(xs).map((val, i) => {
+      return { x: val, y: preds[i] };
+    });
+
+    const originalPoints = inputData.map(d => ({
+      x: d.horsepower, y: d.mpg,
+    }));
 
     return 0;
+    */
   }
 }
