@@ -15,7 +15,7 @@ export default class MLDemo {
   private epochs = 28; // the number of learn iteration (compare with loss function N times)
   inputTensorNormalized: Tensor<Rank> | undefined;
   labelTensorNormalized: Tensor<Rank> | undefined;
-  consoleProgressBar = new ConsoleProgressBar('Machine learinng progress', process.stdout.columns - 13, 0, this.epochs);
+  consoleProgressBar = new ConsoleProgressBar('Machine learinng progress', 100, 0, this.epochs);
 
   constructor() {
     // create neural model
