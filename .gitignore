@@ -2,3 +2,4 @@ node_modules
 script.js
 index.html
 dist
+.DS_Store
