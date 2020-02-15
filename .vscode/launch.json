@@ -15,6 +15,6 @@
     },
     "args": ["inspector"],
     "sourceMaps": true,
-    /*"console": "integratedTerminal"*/
+    "console": "integratedTerminal"
   }]
 }

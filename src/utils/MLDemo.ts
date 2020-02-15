@@ -90,17 +90,19 @@ export default class MLDemo {
      */
     return new Tensorflow.CustomCallback({
       onEpochEnd: (epoch, log) => {
-        console.clear();
         if (log !== undefined) {
-          console.log(`avancement ${(((epoch + 1) / this.epochs) * 100).toFixed(2)}%`);
-          console.log(`perte ${(log.loss * 100).toFixed(2)}% - erreur ${(log.mse * 100).toFixed(2)}%`);
+          process.stdout.clearLine(0);
+          process.stdout.cursorTo(0, 0);
+          process.stdout.write(`Training ➔ ${(((epoch + 1) / this.epochs) * 100).toFixed(2)}%\n`);
+          process.stdout.write(`Loss ➔ ${(log.loss * 100).toFixed(2)}%\n`);
+          process.stdout.write(`Error ➔ ${(log.mse * 100).toFixed(2)}%`);
         }
       }
     });
   }
 
   async trainingNeuralModel() {
-
+    console.clear();
     const configurationFitingPhasis: Tensorflow.ModelFitArgs = {
       batchSize: this.batchSize,
       epochs: this.epochs,
