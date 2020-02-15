@@ -4,6 +4,7 @@ type barStyle = 'basic' | 'fun' | 'personnal';
 // FIXME: handle the position for multiple progressbar
 // FIXME: algo of smooth trackbar
 // FIXME: personnaliser avec des symbol
+// FIXEME: add loading animation with symbol (must be a timer 60 fps)
 export default class ConsoleProgressBar {
   symbolStart = '╰ ';
   symbolEnd = ' ╯';
@@ -13,7 +14,7 @@ export default class ConsoleProgressBar {
   position = {
     x: 0,
     y: 0
-  }
+  };
 
   constructor(private titleOfTheBar = 'Progress bar', private lengthOfTheBar = 80, private minimum = 0, private maximum = 100, private styleSelected: barStyle = 'basic') {
     this.setStyle(styleSelected);
@@ -40,7 +41,7 @@ export default class ConsoleProgressBar {
     }
   }
 
-  setPosition(x:number,y:number) {
+  setPosition(x: number, y: number) {
     this.position.x = x;
     this.position.y = y;
   }
@@ -57,27 +58,32 @@ export default class ConsoleProgressBar {
 
   }
 
-  setExtremum(minimum:number, maximum:number) {
+  setExtremum(minimum: number, maximum: number) {
     this.minimum = minimum;
     this.maximum = maximum;
   }
 
-  setLengthOfTheBar(lengthInChar:number) {
+  setLengthOfTheBar(lengthInChar: number) {
     this.lengthOfTheBar = lengthInChar;
   }
 
-  updateAndDraw(currentValue:number) {
-
-    // responsive bar
-    if(process.stdout.columns < this.lengthOfTheBar + this.position.x) {
-      // - 13 is the security margin
-      this.lengthOfTheBar = this.lengthOfTheBar - (this.position.x + this.lengthOfTheBar - process.stdout.columns) - 13;
-    }
+  updateAndDraw(currentValue: number) {
 
     process.stdout.cursorTo(this.position.x, this.position.y);
-    if(this.isTitleShow) {
-      process.stdout.write( `╭ ${this.titleOfTheBar} ╮\n`);
+    if (this.isTitleShow) {
+      // reponsive title
+      if(this.position.x + this.titleOfTheBar.length > process.stdout.columns) {
+        const overtakingWidth = this.titleOfTheBar.length - ((this.position.x + this.titleOfTheBar.length) - process.stdout.columns);
+        this.titleOfTheBar = this.titleOfTheBar.substr(0, overtakingWidth - 5) + '…';
+      }
+      process.stdout.write(`╭ ${this.titleOfTheBar} ╮\n`);
       process.stdout.cursorTo(this.position.x, this.position.y + 1);
+    }
+
+    // responsive bar on x axe
+    if (process.stdout.columns < this.lengthOfTheBar + this.position.x) {
+      // - 13 is the security margin
+      this.lengthOfTheBar = this.lengthOfTheBar - (this.position.x + this.lengthOfTheBar - process.stdout.columns) - 13;
     }
 
     const relatifCursorChar = (currentValue / this.maximum) * this.lengthOfTheBar;
@@ -86,6 +92,7 @@ export default class ConsoleProgressBar {
     for (let i = this.minimum; i <= relatifCursorChar; i++) {
       bar = bar + this.symbolForegroundProgress;
     }
+
     // draw background progress
     for (let i = relatifCursorChar; i < this.lengthOfTheBar; i++) {
       bar = bar + this.symbolBackgroundProgress;
