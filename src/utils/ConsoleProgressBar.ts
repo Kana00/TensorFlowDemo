@@ -67,18 +67,21 @@ export default class ConsoleProgressBar {
     this.lengthOfTheBar = lengthInChar;
   }
 
+  drawTitle() {
+    // reponsive title
+    if (this.position.x + this.titleOfTheBar.length > process.stdout.columns) {
+      const overtakingWidth = this.titleOfTheBar.length - ((this.position.x + this.titleOfTheBar.length) - process.stdout.columns);
+      // - 5 is the margin to be safe
+      this.titleOfTheBar = this.titleOfTheBar.substr(0, overtakingWidth - 5) + '…';
+    }
+    process.stdout.write(`╭ ${this.titleOfTheBar} ╮\n`);
+    process.stdout.cursorTo(this.position.x, this.position.y + 1);
+  }
+
   updateAndDraw(currentValue: number) {
 
     process.stdout.cursorTo(this.position.x, this.position.y);
-    if (this.isTitleShow) {
-      // reponsive title
-      if(this.position.x + this.titleOfTheBar.length > process.stdout.columns) {
-        const overtakingWidth = this.titleOfTheBar.length - ((this.position.x + this.titleOfTheBar.length) - process.stdout.columns);
-        this.titleOfTheBar = this.titleOfTheBar.substr(0, overtakingWidth - 5) + '…';
-      }
-      process.stdout.write(`╭ ${this.titleOfTheBar} ╮\n`);
-      process.stdout.cursorTo(this.position.x, this.position.y + 1);
-    }
+    if (this.isTitleShow) this.drawTitle();
 
     // responsive bar on x axe
     if (process.stdout.columns < this.lengthOfTheBar + this.position.x) {
