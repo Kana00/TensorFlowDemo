@@ -11,8 +11,6 @@
   },
   "devDependencies": {
     "node-pre-gyp": "^0.14.0",
-    "npx": "^10.2.2",
-    "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   }
 }
