@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "npx ts-node start.ts"
+    "start": "tsc && node ./dist/start.js"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^1.5.2"
