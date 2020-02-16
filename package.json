@@ -1,7 +1,7 @@
 {
-  "name": "tensorflow_test",
+  "name": "tensorflow_demo",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./dist/start.js",
   "license": "MIT",
   "scripts": {
     "start": "tsc && node ./dist/start.js"
