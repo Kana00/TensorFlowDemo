@@ -98,9 +98,9 @@ export default class MLDemo {
           this.consoleProgressBar.setLoadingStyle('pencil');
           this.consoleProgressBar.setProgressBarStyle('basic');
           this.consoleProgressBar.staticDraw(epoch + 1);
-          process.stdout.write('\n');
+          // process.stdout.write('\n');
           process.stdout.write(`Loss ➔ ${(log.loss * 100).toFixed(2)}\n`);
-          process.stdout.write(`Error ➔ ${(log.mse * 100).toFixed(2)}`);
+          process.stdout.write(` Error ➔ ${(log.mse * 100).toFixed(2)}`);
           process.stdout.clearLine(1);
         }
       }
