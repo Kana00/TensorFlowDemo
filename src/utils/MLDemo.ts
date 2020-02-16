@@ -96,11 +96,18 @@ export default class MLDemo {
           // process.stdout.clearLine(0);
           // process.stdout.cursorTo(0, 0);
           this.consoleProgressBar.setLoadingStyle('pencil');
-          this.consoleProgressBar.setProgressBarStyle('square');
-          this.consoleProgressBar.staticDraw(epoch + 1);
-          // process.stdout.write(`Training ➔ ${(((epoch + 1) / this.epochs) * 100).toFixed(2)}%\n`);
-          // process.stdout.write(`Loss ➔ ${(log.loss * 100).toFixed(2)}%\n`);
-          // process.stdout.write(`Error ➔ ${(log.mse * 100).toFixed(2)}%`);
+          this.consoleProgressBar.setProgressBarStyle('basic');
+          this.consoleProgressBar.dynamicDraw(epoch + 1);
+
+          const lossProgress = new ConsoleProgressBar('Loss', 10, 0, 100);
+          lossProgress.setProgressBarStyle('progressive');
+          lossProgress.setPosition(0, 2);
+          lossProgress.staticDraw(Number.parseInt((log.loss * 100).toFixed(2)));
+
+          const mseProgress = new ConsoleProgressBar('MSE', 10, 0, 100);
+          mseProgress.setProgressBarStyle('progressive');
+          mseProgress.setPosition(0, 4);
+          mseProgress.staticDraw(Number.parseInt((log.mse * 100).toFixed(2)));
         }
       }
     });

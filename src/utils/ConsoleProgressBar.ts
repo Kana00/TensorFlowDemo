@@ -2,11 +2,7 @@ import chalk from 'chalk';
 
 type barStyle = 'basic' | 'fun' | 'square' | 'progressive' | 'oldStyle' | 'personnal';
 type loadingStyle = 'bar' | 'dote' | 'pencil' | 'card' | 'personnal';
-// FIXME: handle the position for multiple progressbar
-// FIXME: algo of smooth trackbar
-// FIXME: personnaliser avec des symbol
-// FIXME: add loading animation with symbol (must be a timer 60 fps)
-// FIXME: Number must be in the same monospace space
+
 export default class ConsoleProgressBar {
   beginTitleSymbol = '§';
   endTitleSymbol = '§';
@@ -96,10 +92,6 @@ export default class ConsoleProgressBar {
     this.isTitleShow = true;
   }
 
-  setPersonalizedStyle() {
-
-  }
-
   setExtremum(minimum: number, maximum: number) {
     this.minimum = minimum;
     this.maximum = maximum;
@@ -128,7 +120,7 @@ export default class ConsoleProgressBar {
     }
 
     const relatifCursorChar = (this.currentValue / this.maximum) * this.lengthOfTheBar;
-    let bar = `` + this.startSymbol + `${this.isDynamicMode() ? this.drawLoadingCursor() : false} `;
+    let bar = `` + this.startSymbol + `${this.isDynamicMode() ? this.drawLoadingCursor() : ''} `;
     // draw foreground progress
     for (let i = this.minimum; i <= relatifCursorChar; i++) {
       bar = bar + this.ForegroundProgressSymbol;
@@ -169,7 +161,7 @@ export default class ConsoleProgressBar {
     return this.timer !== undefined;
   }
 
-  dynamicUpdate(currentValue: number) {
+  dynamicDraw(currentValue: number) {
     this.currentValue = currentValue;
     // 25 frame per seconde
     if (this.timer === undefined) {
