@@ -12,10 +12,10 @@ export default class MLDemo {
   private labelMax: Tensor<Rank> | undefined;
   private labelMin: Tensor<Rank> | undefined;
   private batchSize = 32; // the size of the batch valeurs for each learn iteration
-  private epochs = 28; // the number of learn iteration (compare with loss function N times)
+  private epochs = 100; // the number of learn iteration (compare with loss function N times)
   inputTensorNormalized: Tensor<Rank> | undefined;
   labelTensorNormalized: Tensor<Rank> | undefined;
-  consoleProgressBar = new ConsoleProgressBar('Machine learinng progress', 100, 0, this.epochs);
+  consoleProgressBar = new ConsoleProgressBar('Machine learning progress', 100, 0, this.epochs);
 
   constructor() {
     // create neural model
@@ -97,17 +97,11 @@ export default class MLDemo {
           // process.stdout.cursorTo(0, 0);
           this.consoleProgressBar.setLoadingStyle('pencil');
           this.consoleProgressBar.setProgressBarStyle('basic');
-          this.consoleProgressBar.dynamicDraw(epoch + 1);
-
-          const lossProgress = new ConsoleProgressBar('Loss', 10, 0, 100);
-          lossProgress.setProgressBarStyle('progressive');
-          lossProgress.setPosition(0, 2);
-          lossProgress.staticDraw(Number.parseInt((log.loss * 100).toFixed(2)));
-
-          const mseProgress = new ConsoleProgressBar('MSE', 10, 0, 100);
-          mseProgress.setProgressBarStyle('progressive');
-          mseProgress.setPosition(0, 4);
-          mseProgress.staticDraw(Number.parseInt((log.mse * 100).toFixed(2)));
+          this.consoleProgressBar.staticDraw(epoch + 1);
+          process.stdout.write('\n');
+          process.stdout.write(`Loss ➔ ${(log.loss * 100).toFixed(2)}\n`);
+          process.stdout.write(`Error ➔ ${(log.mse * 100).toFixed(2)}`);
+          process.stdout.clearLine(1);
         }
       }
     });
