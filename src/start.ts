@@ -23,7 +23,7 @@ import readline from 'readline';
     console.log(`Miles per gallon ➔ ${prediction}\r\n`);
     rl.prompt();
   }).on('close', function () {
-    console.log("\n➔ Github https://github.com/Kana00");
+    console.log("\n\n➔ Github https://github.com/Kana00\n");
     process.exit(0);
   });
 })();
