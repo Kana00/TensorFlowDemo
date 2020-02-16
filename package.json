@@ -10,7 +10,6 @@
     "@tensorflow/tfjs-node": "^1.5.2"
   },
   "devDependencies": {
-    "node-pre-gyp": "^0.14.0",
     "typescript": "^3.7.5"
   }
 }
