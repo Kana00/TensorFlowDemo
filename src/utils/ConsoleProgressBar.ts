@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 
-type barStyle = 'basic' | 'fun' | 'personnal';
+type barStyle = 'basic' | 'fun' | 'square' | 'progressive' | 'oldStyle' | 'personnal';
+type loadingStyle = 'bar' | 'dote' | 'pencil' | 'card' | 'personnal';
 // FIXME: handle the position for multiple progressbar
 // FIXME: algo of smooth trackbar
 // FIXME: personnaliser avec des symbol
@@ -20,14 +21,14 @@ export default class ConsoleProgressBar {
   };
   currentValue = 0;
   timer: NodeJS.Timeout | undefined;
-  loadingSymbols = ['⋮', '⋰', '⋯','⋱'];
+  loadingSymbols = ['⋮', '⋰', '⋯', '⋱'];
   loadingCursor = 0;
 
   constructor(private titleOfTheBar = 'Progress bar', private lengthOfTheBar = 80, private minimum = 0, private maximum = 100, private styleSelected: barStyle = 'basic') {
-    this.setStyle(styleSelected);
+    this.setProgressBarStyle(styleSelected);
   }
 
-  setStyle(style: barStyle) {
+  setProgressBarStyle(style: barStyle) {
     switch (style) {
       case 'basic':
         this.startSymbol = chalk.white('[ ');
@@ -38,10 +39,44 @@ export default class ConsoleProgressBar {
       case 'fun':
         this.startSymbol = ' ';
         this.endSymbol = ' ';
-        this.ForegroundProgressSymbol = '◉';
-        this.backgroundProgressSymbol = '◎';
+        this.ForegroundProgressSymbol = chalk.green('◉');
+        this.backgroundProgressSymbol = chalk.grey('◎');
+        break;
+      case 'square':
+        this.startSymbol = chalk.white('[ ');
+        this.endSymbol = chalk.white(' ]');
+        this.ForegroundProgressSymbol = chalk.green('⬥');
+        this.backgroundProgressSymbol = chalk.white('⬦');
+        break;
+      case 'progressive':
+        this.startSymbol = chalk.white('[ ');
+        this.endSymbol = chalk.white(' ]');
+        this.ForegroundProgressSymbol = chalk.green('▓');
+        this.backgroundProgressSymbol = chalk.white('░');
+        break;
+      case 'oldStyle':
+        this.startSymbol = chalk.white('[ ');
+        this.endSymbol = chalk.white(' ]');
+        this.ForegroundProgressSymbol = chalk.green('|');
+        this.backgroundProgressSymbol = chalk.white(' ');
         break;
       case 'personnal':
+        break;
+      default:
+        break;
+    }
+  }
+
+  setLoadingStyle(style: loadingStyle) {
+    switch (style) {
+      case 'bar':
+        this.loadingSymbols = ['⋮', '⋰', '⋯', '⋱'];
+        break;
+      case 'pencil':
+        this.loadingSymbols = ['✎', '✏︎', '✐', '✏︎'];
+        break;
+      case 'card':
+        this.loadingSymbols = ['🂠', '🂡', '🂢', '🂣', '🂤', '🂥', '🃜', '🂧', '🂨', '🃆', '🂩', '🂪', '🃒', '🂬', '🂭', '🂮', '🂱'];
         break;
       default:
         break;
@@ -93,7 +128,7 @@ export default class ConsoleProgressBar {
     }
 
     const relatifCursorChar = (this.currentValue / this.maximum) * this.lengthOfTheBar;
-    let bar = `` + this.startSymbol + `${this.isDynamicMode() ? this.drawLoadingCursor():false} `;
+    let bar = `` + this.startSymbol + `${this.isDynamicMode() ? this.drawLoadingCursor() : false} `;
     // draw foreground progress
     for (let i = this.minimum; i <= relatifCursorChar; i++) {
       bar = bar + this.ForegroundProgressSymbol;
@@ -119,30 +154,30 @@ export default class ConsoleProgressBar {
     this.drawProgressBar();
 
     // if progress bar hit the end of the bar
-    if(this.currentValue >= this.maximum) { this.stopDynamicUpdate(); }
+    if (this.currentValue >= this.maximum) { this.stopDynamicUpdate(); }
   }
 
   drawLoadingCursor() {
     // table's progress
     this.loadingCursor++;
-    if(this.loadingCursor === this.loadingSymbols.length - 1) { this.loadingCursor = 0}
+    if (this.loadingCursor === this.loadingSymbols.length - 1) { this.loadingCursor = 0; }
     return this.loadingSymbols[this.loadingCursor];
   }
 
-  private isDynamicMode():boolean {
+  private isDynamicMode(): boolean {
     return this.timer !== undefined;
   }
 
   dynamicUpdate(currentValue: number) {
     this.currentValue = currentValue;
     // 25 frame per seconde
-    if(this.timer === undefined) {
-      this.timer = setInterval(this.callbackUpdate.bind(this) ,100);
+    if (this.timer === undefined) {
+      this.timer = setInterval(this.callbackUpdate.bind(this), 100);
     }
   }
 
   stopDynamicUpdate() {
-    if(this.timer !== undefined) {
+    if (this.timer !== undefined) {
       clearInterval(this.timer);
       this.timer = undefined;
     }
