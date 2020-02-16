@@ -74,6 +74,9 @@ export default class ConsoleProgressBar {
       case 'card':
         this.loadingSymbols = ['🂠', '🂡', '🂢', '🂣', '🂤', '🂥', '🃜', '🂧', '🂨', '🃆', '🂩', '🂪', '🃒', '🂬', '🂭', '🂮', '🂱'];
         break;
+      case 'dote':
+        this.loadingSymbols = ['⠁', '⠈', '⠐', '⠠', '⠄', '⠂'];
+        break;
       default:
         break;
     }

@@ -95,7 +95,7 @@ export default class MLDemo {
         if (log !== undefined) {
           // process.stdout.clearLine(0);
           // process.stdout.cursorTo(0, 0);
-          this.consoleProgressBar.setLoadingStyle('pencil');
+          this.consoleProgressBar.setLoadingStyle('dote');
           this.consoleProgressBar.setProgressBarStyle('basic');
           this.consoleProgressBar.staticDraw(epoch + 1);
           // process.stdout.write('\n');
