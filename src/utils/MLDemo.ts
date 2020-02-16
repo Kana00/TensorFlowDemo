@@ -97,7 +97,7 @@ export default class MLDemo {
           // process.stdout.cursorTo(0, 0);
           this.consoleProgressBar.setLoadingStyle('pencil');
           this.consoleProgressBar.setProgressBarStyle('square');
-          this.consoleProgressBar.dynamicUpdate(epoch + 1);
+          this.consoleProgressBar.staticDraw(epoch + 1);
           // process.stdout.write(`Training ➔ ${(((epoch + 1) / this.epochs) * 100).toFixed(2)}%\n`);
           // process.stdout.write(`Loss ➔ ${(log.loss * 100).toFixed(2)}%\n`);
           // process.stdout.write(`Error ➔ ${(log.mse * 100).toFixed(2)}%`);

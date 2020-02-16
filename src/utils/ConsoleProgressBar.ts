@@ -144,6 +144,7 @@ export default class ConsoleProgressBar {
   }
 
   staticDraw(currentValue: number) {
+    this.currentValue = currentValue;
     if (this.isTitleShow) { this.drawTitle(); }
     this.drawProgressBar();
   }
